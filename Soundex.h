@@ -34,6 +34,7 @@ void processCharacter(const char *name, char *soundex, int *sIndex, int i) {
     }
 }
 
+
 void generateSoundex(const char *name, char *soundex) {
     initializeSoundex(soundex, name[0]);
     int sIndex = 1;
