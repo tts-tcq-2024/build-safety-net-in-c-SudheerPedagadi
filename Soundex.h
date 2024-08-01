@@ -4,9 +4,7 @@
 #include <ctype.h>
 #include <string.h>
 
-// Mapping of characters to Soundex codes
 char getSoundexCode(char c) {
-    c = toupper(c);
     static const char soundexCodes[] = {
         /* A */ '0', /* B */ '1', /* C */ '2', /* D */ '3',
         /* E */ '0', /* F */ '1', /* G */ '2', /* H */ '0',
@@ -16,11 +14,16 @@ char getSoundexCode(char c) {
         /* U */ '0', /* V */ '1', /* W */ '0', /* X */ '2',
         /* Y */ '0', /* Z */ '2'
     };
-    return (c >= 'A' && c <= 'Z') ? soundexCodes[c - 'A'] : '0';
+
+    c = toupper(c);
+    if (c >= 'A' && c <= 'Z') {
+        return soundexCodes[c - 'A'];
+    }
+    return '0'; // Non-alphabetic characters are ignored
 }
 
 void initializeSoundex(char *soundex, const char *name) {
-    if (!name || !soundex || strlen(name) == 0) {
+    if (!name || strlen(name) == 0) {
         strcpy(soundex, "0000");
         return;
     }
@@ -30,19 +33,18 @@ void initializeSoundex(char *soundex, const char *name) {
 }
 
 void appendSoundexCode(char *soundex, char code, int *index) {
-    if (code != '0' && code != soundex[*index - 1] && *index < 4) {
+    if (*index < 4 && code != '0' && code != soundex[*index - 1]) {
         soundex[(*index)++] = code;
     }
 }
 
 void generateSoundex(const char *name, char *soundex) {
     initializeSoundex(soundex, name);
-    if (!name || !soundex || strlen(name) == 0) return;
+    if (!name || strlen(name) == 0) return;
 
     int sIndex = 1;
     for (int i = 1; name[i] != '\0'; ++i) {
-        char code = getSoundexCode(name[i]);
-        appendSoundexCode(soundex, code, &sIndex);
+        appendSoundexCode(soundex, getSoundexCode(name[i]), &sIndex);
     }
 }
 
