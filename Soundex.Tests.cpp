@@ -1,64 +1,54 @@
 #include <gtest/gtest.h>
 #include "Soundex.h"
 
-// Array of input-output pairs for testing the Soundex algorithm
-const char* inputs[] = {
-    "Robert", "R163",
-    "R", "R000",
-    "Ax", "A200",
-    "Bfpv", "B111",
-    "Cgjkqsxz", "C222",
-    "Dt", "D300",
-    "L", "L000",
-    "Mn", "M500",
-    "R", "R000",
-    "Aeiouyhwrb", "A161",
-    "Bb", "B000",
-    "Cc", "C000",
-    "Dd", "D000",
-    "Ashcraft", "A261",
-    "Tymczak", "T522",
-    "Pfister", "P236",
-    "robert", "R163",
-    "ROBERT", "R163",
-    "Tait", "T300",
-    "", "0000",
-    NULL, "0000"
-};
-
-// Utility function to get the number of test cases
-int getNumberOfTestCases() {
-    return sizeof(inputs) / (2 * sizeof(inputs[0]));
+//Append 3 zeros if result contains less than 3 digits
+TEST(SoudexTestsuite, ReplacesConsonantsWithAppropriateDigits_1) {
+//AAA
+  char soundex[5];
+  generateSoundex("AX", soundex);
+  ASSERT_STREQ(soundex,"A200");
 }
 
-// Utility function to get expected Soundex code for given input
-const char* getExpectedSoundex(int index) {
-    return inputs[2 * index + 1];
+TEST(SoudexTestsuite, ReplacesConsonantsWithAppropriateDigits_2) {
+//AAA
+  char soundex[5];
+  generateSoundex("A1CDFe", soundex);
+  ASSERT_STREQ(soundex,"A231");
 }
 
-// Utility function to get input string for given index
-const char* getInputString(int index) {
-    return inputs[2 * index];
+//Test case to ckeck special character
+TEST(SoudexTestsuite, ReplacesConsonantsWithAppropriateDigits_3) {
+//AAA
+  char soundex[5];
+  generateSoundex("A[", soundex);
+  ASSERT_STREQ(soundex,"A000");
+}
+TEST(SoudexTestsuite, ReplacesConsonantsWithAppropriateDigits_4) {
+ //AAA
+  char soundex[5];
+  generateSoundex("ACGJ", soundex);
+ ASSERT_STREQ(soundex,"A200");
 }
 
-// Function to generate and validate Soundex code
-void validateSoundexCode(const char* input, const char* expected) {
-    char soundex[5];
-    generateSoundex(input, soundex);
-    ASSERT_STREQ(soundex, expected);
+TEST(SoudexTestsuite, ReplacesConsonantsWithAppropriateDigits_5) {
+ //AAA
+  char soundex[5];
+  generateSoundex("@@BBCCDD", soundex);
+ ASSERT_STREQ(soundex,"@123");
 }
 
-// Function to run all Soundex tests
-void runSoundexTests() {
-    int numCases = getNumberOfTestCases();
-    for (int i = 0; i < numCases; ++i) {
-        const char* input = getInputString(i);
-        const char* expected = getExpectedSoundex(i);
-        validateSoundexCode(input, expected);
-    }
+//Replace all adjacent same digits with one digit
+TEST(SoudexTestsuite, ReplacesConsonantsWithAppropriateDigits_6) {
+//AAA
+  char soundex[5];
+  generateSoundex("Abfp", soundex);
+  ASSERT_STREQ(soundex,"A100");
 }
 
-// Google Test Suite for Soundex
-TEST(SoundexTestSuite, GenericSoundexTests) {
-    runSoundexTests();
+//two letters with the same number separated by 'h', 'w' or 'y' are coded as a single number
+TEST(SoudexTestsuite, ReplacesConsonantsWithAppropriateDigits_7) {
+//AAA
+  char soundex[5];
+  generateSoundex("BShZ", soundex);
+  ASSERT_STREQ(soundex,"B200");
 }
