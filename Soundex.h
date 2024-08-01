@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <string.h>
 
+// Function to get the soundex code for a given character
 char getSoundexCode(char c) {
     static const char soundexCodes[] = {
         /* A */ '0', /* B */ '1', /* C */ '2', /* D */ '3',
@@ -16,14 +17,12 @@ char getSoundexCode(char c) {
     };
 
     c = toupper(c);
-    if (c >= 'A' && c <= 'Z') {
-        return soundexCodes[c - 'A'];
-    }
-    return '0'; // Non-alphabetic characters are ignored
+    return (c >= 'A' && c <= 'Z') ? soundexCodes[c - 'A'] : '0';
 }
 
+// Function to initialize the soundex array
 void initializeSoundex(char *soundex, const char *name) {
-    if (!name || strlen(name) == 0) {
+    if (name == NULL || strlen(name) == 0) {
         strcpy(soundex, "0000");
         return;
     }
@@ -32,20 +31,29 @@ void initializeSoundex(char *soundex, const char *name) {
     soundex[4] = '\0';
 }
 
-void appendSoundexCode(char *soundex, char code, int *index) {
-    if (*index < 4 && code != '0' && code != soundex[*index - 1]) {
+// Function to set the next soundex code in the array
+void setSoundexCode(char *soundex, char code, int *index) {
+    if (code != '0' && (*index == 1 || code != soundex[*index - 1]) && *index < 4) {
         soundex[(*index)++] = code;
     }
 }
 
+// Function to process each character and update soundex
+void processCharacter(char c, char *soundex, int *index) {
+    char code = getSoundexCode(c);
+    setSoundexCode(soundex, code, index);
+}
+
+// Function to generate the soundex code for a given name
 void generateSoundex(const char *name, char *soundex) {
     initializeSoundex(soundex, name);
-    if (!name || strlen(name) == 0) return;
+    if (name == NULL || strlen(name) == 0) return;
 
     int sIndex = 1;
     for (int i = 1; name[i] != '\0'; ++i) {
-        appendSoundexCode(soundex, getSoundexCode(name[i]), &sIndex);
+        processCharacter(name[i], soundex, &sIndex);
     }
+    soundex[4] = '\0'; // Ensure the soundex string is null-terminated
 }
 
 #endif // SOUNDEX_H
