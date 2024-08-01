@@ -1,73 +1,46 @@
 #ifndef SOUNDEX_H
 #define SOUNDEX_H
 
+#include "Soundex.h"
 #include <ctype.h>
 #include <string.h>
 
-// Function to get the soundex code for a given character
 char getSoundexCode(char c) {
-    static const char soundexCodes[] = {
-        /* A */ '0', /* B */ '1', /* C */ '2', /* D */ '3',
-        /* E */ '0', /* F */ '1', /* G */ '2', /* H */ '0',
-        /* I */ '0', /* J */ '2', /* K */ '2', /* L */ '4',
-        /* M */ '5', /* N */ '5', /* O */ '0', /* P */ '1',
-        /* Q */ '2', /* R */ '6', /* S */ '2', /* T */ '3',
-        /* U */ '0', /* V */ '1', /* W */ '0', /* X */ '2',
-        /* Y */ '0', /* Z */ '2'
+    static const char soundexTable[26] = {'0', '1', '2', '3', '0', '1', '2', '0', '0', '2', '2', '4', '5','5', '0', '1', '2', '6', '2', '3', '0', '1', '0', '2', '0', '2'
     };
-
     c = toupper(c);
-    return (c >= 'A' && c <= 'Z') ? soundexCodes[c - 'A'] : '0';
+    if (!isalpha(c))
+    {      
+         return '0';
+    }
+     return soundexTable[c - 'A'];
 }
 
-// Function to initialize the soundex array
-void initializeSoundex(char *soundex, const char *name) {
-    if (name == NULL || strlen(name) == 0) {
-        strcpy(soundex, "0000");
-        return;
-    }
-    soundex[0] = toupper(name[0]);
+void initializeSoundex(char *soundex, char firstCharacter) {
+    soundex[0] = toupper(firstCharacter);
     soundex[1] = soundex[2] = soundex[3] = '0';
+    soundex[4] = '\0';
 }
 
-// Function to check if the character code should be set
-int shouldSetCode(char code, const char *soundex, int index) {
-    return code != '0' && (index == 1 || code != soundex[index - 1]);
+int shouldAddToSoundex(char code, char *soundex, int sIndex) {
+    return sIndex < 4 && code != '0' && code != soundex[sIndex - 1];
 }
 
-// Function to append a code to the soundex array
-void appendCode(char *soundex, char code, int *index) {
-    if (*index < 4 && shouldSetCode(code, soundex, *index)) {
-        soundex[(*index)++] = code;
+void processCharacter(const char *name, char *soundex, int *sIndex, int i) {
+    char code = getSoundexCode(name[i]);
+    if (shouldAddToSoundex(code, soundex, *sIndex)) {
+        soundex[*sIndex] = code;
+        (*sIndex)++;
     }
 }
 
-// Function to process each character
-void processCharacter(char c, char *soundex, int *index) {
-    char code = getSoundexCode(c);
-    appendCode(soundex, code, index);
-}
-
-// Function to finalize the soundex array
-void finalizeSoundex(char *soundex) {
-    soundex[4] = '\0'; // Ensure the soundex string is null-terminated
-}
-
-// Function to validate the name
-int isValidName(const char *name) {
-    return name != NULL && strlen(name) > 0;
-}
-
-// Function to generate the soundex code for a given name
 void generateSoundex(const char *name, char *soundex) {
-    initializeSoundex(soundex, name);
-    if (!isValidName(name)) return;
-
+    initializeSoundex(soundex, name[0]);
     int sIndex = 1;
-    for (int i = 1; name[i] != '\0'; ++i) {
-        processCharacter(name[i], soundex, &sIndex);
+    int len = strlen(name);
+    for (int i = 1; i < len; i++) {
+        processCharacter(name, soundex, &sIndex, i);
     }
-    finalizeSoundex(soundex); // Ensure the soundex string is properly null-terminated
 }
 
 #endif // SOUNDEX_H
