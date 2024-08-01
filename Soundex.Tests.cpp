@@ -41,15 +41,20 @@ const char* getInputString(int index) {
     return inputs[2 * index];
 }
 
-// Test function to verify Soundex code generation
+// Function to generate and validate Soundex code
+void validateSoundexCode(const char* input, const char* expected) {
+    char soundex[5];
+    generateSoundex(input, soundex);
+    ASSERT_STREQ(soundex, expected);
+}
+
+// Function to run all Soundex tests
 void runSoundexTests() {
     int numCases = getNumberOfTestCases();
     for (int i = 0; i < numCases; ++i) {
         const char* input = getInputString(i);
         const char* expected = getExpectedSoundex(i);
-        char soundex[5];
-        generateSoundex(input, soundex);
-        ASSERT_STREQ(soundex, expected);
+        validateSoundexCode(input, expected);
     }
 }
 
