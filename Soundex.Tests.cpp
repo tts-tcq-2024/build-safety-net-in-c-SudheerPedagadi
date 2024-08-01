@@ -29,25 +29,24 @@ const char* inputs[] = {
 // Test function for running Soundex tests
 void runSoundexTests() 
 { 
-  // Calculate the number of test cases based on the size of the inputs array
-  int numCases = sizeof(inputs) / (2 * sizeof(inputs[0]));
-  // Iterate through each test case
-  for (int i = 0; i < numCases; ++i) 
-  {
-    // Get the input and expected output for the current test case
-    const char* input = inputs[2 * i];
-    const char* expected = inputs[2 * i + 1];
-    // Buffer to hold the generated Soundex code
-    char soundex[5];
-    // Generate the Soundex code for the given input
-    generateSoundex(input, soundex);
-    // Assert that the generated Soundex code matches the expected output
-    ASSERT_STREQ(soundex, expected);
-  }
+    // Calculate the number of test cases based on the size of the inputs array
+    int numCases = sizeof(inputs) / (2 * sizeof(inputs[0]));
+    // Iterate through each test case
+    for (int i = 0; i < numCases; ++i) 
+    {
+        // Get the input and expected output for the current test case
+        const char* input = inputs[2 * i];
+        const char* expected = inputs[2 * i + 1];
+        // Buffer to hold the generated Soundex code
+        char soundex[5];
+        // Generate the Soundex code for the given input
+        generateSoundex(input, soundex);
+        // Assert that the generated Soundex code matches the expected output
+        ASSERT_STREQ(soundex, expected);
+    }
 }
 
 TEST(SoundexTestSuite, GenericSoundexTests)
 {
-  runSoundexTests();
+    runSoundexTests();
 }
-
