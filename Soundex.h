@@ -4,6 +4,7 @@
 #include <ctype.h>
 #include <string.h>
 
+// Mapping of characters to Soundex codes
 static const char soundexCodes[] = 
 {
     /* A */ '0', /* B */ '1', /* C */ '2', /* D */ '3',
@@ -28,32 +29,27 @@ char getSoundexCode(char c)
 
 void generateSoundex(const char *name, char *soundex) 
 {
-    if (!name || !soundex)
-    {
-        strcpy(soundex, "0000");
-        return;
-    }
-    
-    int len = strlen(name);
-    if (len == 0)
+    if (!name || !soundex || strlen(name) == 0)
     {
         strcpy(soundex, "0000");
         return;
     }
     
     soundex[0] = toupper(name[0]);
-    int sIndex = 1;
     char previousCode = getSoundexCode(name[0]);
-    for (int i = 1; i < len && sIndex < 4; i++)
+    int sIndex = 1;
+    
+    for (int i = 1; name[i] != '\0' && sIndex < 4; ++i)
     {
         char code = getSoundexCode(name[i]);
         if (code != '0' && code != previousCode)
         {
             soundex[sIndex++] = code;
-            previousCode = code;
         }
+        previousCode = code;
     }
     
+    // Pad with '0' until the length is 4
     while (sIndex < 4) 
     {
         soundex[sIndex++] = '0';
