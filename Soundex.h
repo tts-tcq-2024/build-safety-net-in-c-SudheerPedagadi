@@ -17,7 +17,10 @@ char getSoundexCode(char c) {
     };
 
     c = toupper(c);
-    return (c >= 'A' && c <= 'Z') ? soundexCodes[c - 'A'] : '0';
+    if (c >= 'A' && c <= 'Z') {
+        return soundexCodes[c - 'A'];
+    }
+    return '0'; // Non-alphabetic characters are ignored
 }
 
 // Function to initialize the soundex array
@@ -28,20 +31,24 @@ void initializeSoundex(char *soundex, const char *name) {
     }
     soundex[0] = toupper(name[0]);
     soundex[1] = soundex[2] = soundex[3] = '0';
-    soundex[4] = '\0';
 }
 
-// Function to set the next soundex code in the array
-void setSoundexCode(char *soundex, char code, int *index) {
-    if (code != '0' && (*index == 1 || code != soundex[*index - 1]) && *index < 4) {
+// Function to append a character to the soundex array
+void appendSoundex(char *soundex, char code, int *index) {
+    if (*index < 4 && code != '0' && (code != soundex[*index - 1] || *index == 1)) {
         soundex[(*index)++] = code;
     }
 }
 
-// Function to process each character and update soundex
+// Function to process each character
 void processCharacter(char c, char *soundex, int *index) {
     char code = getSoundexCode(c);
-    setSoundexCode(soundex, code, index);
+    appendSoundex(soundex, code, index);
+}
+
+// Function to finalize the soundex array
+void finalizeSoundex(char *soundex) {
+    soundex[4] = '\0'; // Ensure the soundex string is null-terminated
 }
 
 // Function to generate the soundex code for a given name
@@ -53,7 +60,7 @@ void generateSoundex(const char *name, char *soundex) {
     for (int i = 1; name[i] != '\0'; ++i) {
         processCharacter(name[i], soundex, &sIndex);
     }
-    soundex[4] = '\0'; // Ensure the soundex string is null-terminated
+    finalizeSoundex(soundex); // Ensure the soundex string is properly null-terminated
 }
 
 #endif // SOUNDEX_H
